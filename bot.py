@@ -14,9 +14,8 @@ from mood_time_series import predict_mood
 
 load_dotenv()
 MOOD = ['sad', 'angry', 'curious', 'disgusted', 'fearful', 'happy', 'neutral', 'surprised']
+HOURS = 2
 
-# def get_messages(author_id, x):
-#     return get_all_messages_past_x_hours(author_id, x)
 
 def get_gpt3_message(message):
     openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -31,7 +30,7 @@ def get_gpt3_message(message):
 MOOD = ['sad', 'angry', 'curious', 'disgusted', 'fearful', 'happy', 'neutral', 'surprised']
 
 def suggest_activity(author_id):
-    messages = get_all_messages_past_x_hours(author_id, 1)
+    messages = get_all_messages_past_x_hours(author_id, HOURS)
     data = [message[2] for message in messages]
     # print(data)
     moods, prediction = predict_mood(data)
@@ -57,8 +56,7 @@ class MyClient(discord.Client):
             author_id = message.author.id
 
             if message.content.startswith('!mood'):
-                # bot_msg = await message.channel.send("Mental Health Bot is thinking...")
-                messages = get_all_messages_past_x_hours(str(author_id), 1) # returns a list of messages
+                messages = get_all_messages_past_x_hours(str(author_id), HOURS) # returns a list of messages
                 data = [message[2] for message in messages]
                 # print(data)
                 mood, prediction = predict_mood(data)
