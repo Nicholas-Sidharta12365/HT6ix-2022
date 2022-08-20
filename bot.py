@@ -31,6 +31,8 @@ class MyClient(discord.Client):
             # print(second_count)
             log_message(str(author_id), message.content, second_count) #more recent ones are at the top
             print(get_all_messages_past_x_hours(str(author_id), 3)) # returns a list of messages
+        if message.content.startswith('zzzz'):
+            await message.channel.send('Sleepy')
 
 def main():
     client = MyClient()
