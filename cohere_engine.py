@@ -18,7 +18,7 @@ co = cohere.Client("BIt19ULiuzKZGybC7rkrP9Si8kEtmuF3SHjyIohZ")
 
 def generate(text_list):
   response = co.classify(
-    model='2e8eb57c-441c-46b2-ab8d-c0699017a324-ft',
+    model='596c51ba-f4d1-4669-b3c9-51f261bb5ac2-ft',
     inputs=text_list
     )
 
@@ -30,7 +30,7 @@ def generate(text_list):
 
 def classify(text): 
   response = co.classify(
-    model='2e8eb57c-441c-46b2-ab8d-c0699017a324-ft',
+    model='596c51ba-f4d1-4669-b3c9-51f261bb5ac2-ft',
     inputs=[text]
     )
   
