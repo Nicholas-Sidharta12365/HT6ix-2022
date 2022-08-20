@@ -7,7 +7,9 @@ from datetime import datetime
 import math
 import requests
 import json
-from cohere_engine import generate
+from cohere_engine import generate, classify
+from numpy_preprocess import adapt_array
+from mood_time_series import predict_mood
 
 load_dotenv()
 
@@ -29,11 +31,18 @@ class MyClient(discord.Client):
             time_count = datetime.now() - datetime(2022, 8, 19, 0, 0, 0)
             second_count = math.floor(time_count.total_seconds())
             # print(second_count)
-            log_message(str(author_id), message.content, second_count) # more recent ones are at the top
-            print(get_all_messages_past_x_hours(str(author_id), 3)) # returns a list of messages
+            classification = classify(message.content)
+            log_message(str(author_id), message.content, second_count, adapt_array(classification)) # more recent ones are at the top
+            messages = get_all_messages_past_x_hours(str(author_id), 1) # returns a list of messages
+            data = [message[2] for message in messages]
+            mood = predict_mood(data)
+            await message.channel.send(f"Your mood right now: {mood}")
+            
+            # await message.channel.send(result[0])
         if message.content.startswith('zzzz'):
             await message.channel.send('Sleepy')
 
+    
 def main():
     client = MyClient()
     client.run(os.getenv('TOKEN'))

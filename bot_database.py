@@ -1,18 +1,19 @@
 import sqlite3
 import datetime
 import math
+from numpy_preprocess import convert_array
 
 def create_db(user_id):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute(f'''CREATE TABLE IF NOT EXISTS user{user_id} (message TEXT, time_since BIGINT)''')
+    c.execute(f'''CREATE TABLE IF NOT EXISTS user{user_id} (message TEXT, time_since BIGINT, classification TEXT)''')
     conn.commit()
     conn.close()
 
-def log_message(user_id, message, time_since):
+def log_message(user_id, message, time_since, classification):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute(f'''INSERT INTO user{user_id} (message, time_since) VALUES (?, ?)''', (message, time_since))
+    c.execute(f'''INSERT INTO user{user_id} (message, time_since, classification) VALUES (?, ?, ?)''', (message, time_since, classification))
     conn.commit()
     conn.close()
 
@@ -24,10 +25,10 @@ def get_all_messages_past_x_hours(user_id, x):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     time_limit = datetime.datetime.now() - datetime.datetime(2022, 8, 19, 0, 0, 0) - datetime.timedelta(hours=x)
-    c.execute(f'''SELECT message, time_since FROM user{user_id} WHERE time_since > {math.floor(time_limit.total_seconds())}''')
+    c.execute(f'''SELECT message, time_since, classification FROM user{user_id} WHERE time_since > {math.floor(time_limit.total_seconds())}''')
     messages = c.fetchall()
     conn.close()
-    messages = [(message[0], get_time_limit(message[1], x)) for message in messages]
+    messages = [(message[0], get_time_limit(message[1], x), convert_array(message[2])) for message in messages]
     return messages
 
 # create_db('1')
