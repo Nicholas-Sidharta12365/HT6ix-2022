@@ -34,10 +34,12 @@ class MyClient(discord.Client):
             second_count = math.floor(time_count.total_seconds())
             # print(second_count)
             classification = classify(message.content)
-            log_message(str(author_id), message.content, second_count, adapt_array(classification)) # more recent ones are at the top
+            # print(classification)
+            log_message(str(author_id), message.content, second_count, adapt_array(classification))
             messages = get_all_messages_past_x_hours(str(author_id), 1) # returns a list of messages
             data = [message[2] for message in messages]
-            (mood, prediction) = predict_mood(data)
+            # print(data)
+            mood, prediction = predict_mood(data)
             # await message.channel.send(f"**{message.author}**, your mood right now: {mood}")
             # await message.channel.send(result[0])
 
@@ -46,7 +48,7 @@ class MyClient(discord.Client):
                 "type": "rich",
                 "color": 2899536,
                 "description": f"**{message.author}'s** mood right now: {prediction}",
-                "timestamp": datetime.utcnow()
+                "timestamp": str(datetime.utcnow())
             }
             
             embed = discord.Embed.from_dict(embedOptions)

@@ -20,8 +20,10 @@ def predict_mood(classifications):
     data = np.array([arr.tolist() for arr in classifications])
     result = []
     for i in range(len(MOOD)):
+        # print(data[:, i])
         smoothing = SimpleExpSmoothing(data[:,i]).fit(smoothing_level=0.2, optimized=False)
-        fcast= smoothing.forecast(1)
+        fcast = smoothing.forecast(1)
+        # print(fcast)
         result.append(fcast[0])
         
     df = pd.DataFrame(data)
@@ -31,3 +33,5 @@ def predict_mood(classifications):
     classify_result = softmax(result)
     # plt.show()
     return (normalize(result), MOOD[np.argmax(classify_result)])
+
+# def retrieve_mood_data(author_id, )
