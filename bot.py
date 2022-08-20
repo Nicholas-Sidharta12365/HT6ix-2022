@@ -29,7 +29,7 @@ class MyClient(discord.Client):
             time_count = datetime.now() - datetime(2022, 8, 19, 0, 0, 0)
             second_count = math.floor(time_count.total_seconds())
             # print(second_count)
-            log_message(str(author_id), message.content, second_count) #more recent ones are at the top
+            log_message(str(author_id), message.content, second_count) # more recent ones are at the top
             print(get_all_messages_past_x_hours(str(author_id), 3)) # returns a list of messages
         if message.content.startswith('zzzz'):
             await message.channel.send('Sleepy')
