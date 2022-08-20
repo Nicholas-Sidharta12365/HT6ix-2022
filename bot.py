@@ -7,11 +7,13 @@ from datetime import datetime
 import math
 import requests
 import json
+import numpy as np
 from cohere_engine import generate, classify
 from numpy_preprocess import adapt_array
 from mood_time_series import predict_mood
 
 load_dotenv()
+MOOD = ['sad', 'angry', 'curious', 'disgusted', 'fearful', 'happy', 'neutral', 'surprised']
 
 # def get_messages(author_id, x):
 #     return get_all_messages_past_x_hours(author_id, x)
@@ -35,14 +37,30 @@ class MyClient(discord.Client):
             log_message(str(author_id), message.content, second_count, adapt_array(classification)) # more recent ones are at the top
             messages = get_all_messages_past_x_hours(str(author_id), 1) # returns a list of messages
             data = [message[2] for message in messages]
-            mood = predict_mood(data)
-            await message.channel.send(f"Your mood right now: {mood}")
-            
+            (mood, prediction) = predict_mood(data)
+            # await message.channel.send(f"**{message.author}**, your mood right now: {mood}")
             # await message.channel.send(result[0])
-        if message.content.startswith('zzzz'):
-            await message.channel.send('Sleepy')
 
-    
+            embedOptions = {
+                "title": "Mood checker",
+                "type": "rich",
+                "color": 2899536,
+                "description": f"**{message.author}'s** mood right now: {prediction}",
+                "timestamp": datetime.utcnow()
+            }
+            
+            embed = discord.Embed.from_dict(embedOptions)
+            embed.add_field(name='\U0001F622', value=f'{round(mood[0] * 100)}%', inline=True)
+            embed.add_field(name='\U0001F621', value=f'{round(mood[1] * 100)}%', inline=True)
+            embed.add_field(name='\U0001F9D0', value=f'{round(mood[2] * 100)}%', inline=True)
+            embed.add_field(name='\U0001F92E', value=f'{round(mood[3] * 100)}%', inline=True)
+            embed.add_field(name='\U0001F628', value=f'{round(mood[4] * 100)}%', inline=True)
+            embed.add_field(name='\U0001F600', value=f'{round(mood[5] * 100)}%', inline=True)
+            embed.add_field(name='\U0001F610', value=f'{round(mood[6] * 100)}%', inline=True)
+            embed.add_field(name='\U0001F62F', value=f'{round(mood[7] * 100)}%', inline=True)
+            embed.add_field(name='** **', value='** **', inline=True)
+            await message.channel.send(embed=embed)
+
 def main():
     client = MyClient()
     client.run(os.getenv('TOKEN'))
