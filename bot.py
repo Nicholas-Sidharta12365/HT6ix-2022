@@ -1,16 +1,22 @@
 import discord
 import os
 from dotenv import load_dotenv
+import requests
+import json
 
-load_dotenv() # load all the variables from the env file
-bot = discord.Bot()
+load_dotenv()
 
-@bot.event
+client = discord.Client(intents=discord.Intents.default())
+
+@client.event
 async def on_ready():
-    print(f"{bot.user} is ready and online!")
+    print('We have logged in {0.user}'.format(client))
 
-@bot.slash_command(name = "hello", description = "Say hello to the bot")
-async def hello(ctx):
-    await ctx.respond("Hey!")
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    if message.content.startswith('$hello'):
+        await message.channel.send('Hello!')
 
-bot.run(os.getenv('TOKEN')) # run the bot with the token
+client.run(os.getenv('TOKEN'))
