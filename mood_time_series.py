@@ -20,8 +20,7 @@ def predict_mood(classifications):
     data = np.array([arr.tolist() for arr in classifications])
     result = []
     for i in range(len(MOOD)):
-        # print(data[:, i])
-        smoothing = SimpleExpSmoothing(data[:,i]).fit(smoothing_level=0.2, optimized=False)
+        smoothing = SimpleExpSmoothing(data[:,i] if data.shape[0] != 1 else np.array([data[:, i], data[:, i]])).fit(smoothing_level=0.2, optimized=False)
         fcast = smoothing.forecast(1)
         # print(fcast)
         result.append(fcast[0])
