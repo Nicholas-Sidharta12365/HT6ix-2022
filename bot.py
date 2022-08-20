@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import requests
 import json
+from cohere_engine import generate
 
 load_dotenv()
 
@@ -18,7 +19,8 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+    if message.content.startswith('piece of garbage'):
+        response = generate(['piece of garbage'])
+        await message.channel.send(response)
 
 client.run(os.getenv('TOKEN'))
