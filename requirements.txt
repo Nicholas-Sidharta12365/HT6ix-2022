@@ -1,0 +1,12 @@
+statsmodels
+numpy
+cohere
+openai
+discord
+os
+dotenv
+datetime
+math
+random
+sqlite3
+io

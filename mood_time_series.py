@@ -1,10 +1,8 @@
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.api import SimpleExpSmoothing
-import matplotlib.pyplot as plt
-import matplotlib
 
-matplotlib.use('Qt5Agg')
+# matplotlib.use('Qt5Agg')
 
 MOOD = ['sad', 'angry', 'curious', 'disgusted', 'fearful', 'happy', 'neutral', 'surprised']
 
@@ -19,6 +17,7 @@ def normalize(x):
 def predict_mood(classifications):
     data = np.array([arr.tolist() for arr in classifications])
     result = []
+    np.seterr(all = 'ignore') 
     for i in range(len(MOOD)):
         smoothing = SimpleExpSmoothing(data[:,i] if data.shape[0] != 1 else np.array([data[:, i], data[:, i]])).fit(smoothing_level=0.2, optimized=False)
         fcast = smoothing.forecast(1)
