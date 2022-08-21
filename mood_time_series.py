@@ -31,6 +31,8 @@ def predict_mood(classifications):
 
     classify_result = softmax(result)
     # plt.show()
+    # print(df)
+    # print(normalize(result))
     return (normalize(result), MOOD[np.argmax(classify_result)])
 
 # def retrieve_mood_data(author_id, )
