@@ -23,7 +23,9 @@ def get_gpt3_message(message):
         model="text-davinci-002",
         prompt=message,
         max_tokens=100,
-        temperature=0
+        temperature=1.0,
+        presence_penalty=2.0,
+        frequency_penalty=2.0
     )
     return data.to_dict()["choices"][0]["text"].strip("\n")
 
@@ -31,11 +33,14 @@ MOOD = ['sad', 'angry', 'curious', 'disgusted', 'fearful', 'happy', 'neutral', '
 
 def suggest_activity(author_id):
     messages = get_all_messages_past_x_hours(author_id, HOURS)
-    data = [message[2] for message in messages]
+    data = [apply_sigmoid(msg) for msg in messages]
     # print(data)
-    moods, prediction = predict_mood(data)
+    moods, _ = predict_mood(data)
     idx = (-moods).argsort()[:3] #indices of largest to smallest
     moods_top_3 = [MOOD[i] for i in idx]
+    for i in idx:
+        if moods[i] < 1/5:
+            moods_top_3.remove(MOOD[i])
     ret_messages = []
     for mood in moods_top_3:
         if mood not in ["curious", "neutral", "surprised"]:
@@ -60,6 +65,9 @@ class MyClient(discord.Client):
 
             if message.content.startswith('!mood'):
                 messages = get_all_messages_past_x_hours(str(author_id), HOURS) # returns a list of messages, more recent = bigger value for message[1]
+                if len(messages) == 0:
+                    await message.channel.send(f"You haven't sent any messages in the last {HOURS} hours. Please send some messages to get started.")
+                    return
                 data = [apply_sigmoid(msg) for msg in messages]
                 # print(data)
                 mood, prediction = predict_mood(data)
@@ -86,6 +94,9 @@ class MyClient(discord.Client):
                 embed.add_field(name='** **', value='** **', inline=True)
                 await message.channel.send(embed=embed, content=None)
             elif message.content.startswith("!suggest"):
+                if len(get_all_messages_past_x_hours(str(author_id), HOURS)) == 0:
+                    await message.channel.send(f"{message.author}, you haven't written any messages in the last {HOURS} hours. Please write some messages to get suggestions.")
+                    return
                 bot_msg = await message.channel.send("Mental Health Bot is thinking...")
                 messages = suggest_activity(author_id)
                 embed_options = {"title": f"Mental Health Suggestions", "type": "rich", "color": 2899536, "timestamp": str(datetime.utcnow())}
