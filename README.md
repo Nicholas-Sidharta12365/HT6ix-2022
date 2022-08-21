@@ -8,7 +8,7 @@
 ## About
 ### IntelliCord is a discord bot that purposes as a mental health tracker and gives out solutions / support to the user based on the current mental state
 
-##Setup
+## Setup
 Create a Discord bot at https://discord.com/developers/applications and give it permissions to read, write, edit and send messages at least
 
 Set up an account at https://cohere.ai/ and https://beta.openai.com/
@@ -21,6 +21,6 @@ Run `pip install -r requirements.txt` to install all Python requirements
 
 Run `python bot.py` to start the discord bot
 
-##Website
+## Website
 
 Instructions to launch the website are in `landing/`
