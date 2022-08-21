@@ -8,7 +8,7 @@ import Services from '../components/Services'
 const index = () => {
   return (
     <>
-    <div className="h-max bg-gradient-to-r from-sky-500 to-indigo-500">
+    <div className="h-max bg-gradient-to-r from-sky-500 to-indigo-500 overflow-x-hidden">
       <Navbar />
       <Display />
       <About />
