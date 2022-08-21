@@ -29,6 +29,7 @@ def get_all_messages_past_x_hours(user_id, x):
     messages = c.fetchall()
     conn.close()
     messages = [(message[0], get_time_limit(message[1], x), convert_array(message[2])) for message in messages]
+    print(messages)
     return messages
 
 # create_db('1')

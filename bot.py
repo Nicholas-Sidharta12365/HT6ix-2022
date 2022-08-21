@@ -42,6 +42,9 @@ def suggest_activity(author_id):
             ret_messages.append(get_gpt3_message(f"Write a suggestion to promote mental health for a worker who is feeling {mood} while at work"))
     return ret_messages
 
+def apply_sigmoid(message):
+    return (2.5 / (1 + np.exp(-(message[1]-2/3*HOURS*3600)/(HOURS*3600/16))))*message[2]
+
 class MyClient(discord.Client):
     def __init__(self, intents=discord.Intents.default()):
         intents.message_content = True
@@ -56,8 +59,8 @@ class MyClient(discord.Client):
             author_id = message.author.id
 
             if message.content.startswith('!mood'):
-                messages = get_all_messages_past_x_hours(str(author_id), HOURS) # returns a list of messages
-                data = [message[2] for message in messages]
+                messages = get_all_messages_past_x_hours(str(author_id), HOURS) # returns a list of messages, more recent = bigger value for message[1]
+                data = [apply_sigmoid(msg) for msg in messages]
                 # print(data)
                 mood, prediction = predict_mood(data)
                 # await message.channel.send(f"**{message.author}**, your mood right now: {mood}")
