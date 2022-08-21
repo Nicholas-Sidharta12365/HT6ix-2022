@@ -27,8 +27,12 @@ def get_gpt3_message(message):
     )
     return data.to_dict()["choices"][0]["text"].strip("\n")
 
-MOOD = ['sad', 'angry', 'curious', 'disgusted', 'fearful', 'happy', 'neutral', 'surprised']
-
+def get_convo_reply(message):
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    data = openai.Completion.create(
+        model="text-davinci-002"
+    )
+    
 def suggest_activity(author_id):
     messages = get_all_messages_past_x_hours(author_id, HOURS)
     data = [message[2] for message in messages]
@@ -86,13 +90,15 @@ class MyClient(discord.Client):
                 embed.add_field(name='** **', value='** **', inline=True)
                 await message.channel.send(embed=embed, content=None)
             elif message.content.startswith("!suggest"):
-                bot_msg = await message.channel.send("Mental Health Bot is thinking...")
+                bot_msg = await message.channel.send("IntelliCord is thinking...")
                 messages = suggest_activity(author_id)
-                embed_options = {"title": f"Mental Health Suggestions", "type": "rich", "color": 2899536, "timestamp": str(datetime.utcnow())}
+                embed_options = {"title": f"IntelliCord Suggestions", "type": "rich", "color": 2899536, "timestamp": str(datetime.utcnow())}
                 embed = discord.Embed.from_dict(embed_options)
                 for i, msg in enumerate(messages):
                     embed.add_field(name=f"Suggestion {i+1}", value=msg)
                 await bot_msg.edit(embed=embed, content=None)
+            elif message.content.startswith("!convo"):
+                await message.channel.send("Changing into convo mode. What are you thinking right now?")
             else:
                 create_db(str(author_id)) # can log existing users a do a check if that user exists
                 time_count = datetime.now() - datetime(2022, 8, 19, 0, 0, 0)
